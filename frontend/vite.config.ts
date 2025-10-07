@@ -5,6 +5,7 @@ import path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: './', // Required for Vercel
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -17,13 +18,44 @@ export default defineConfig({
       '@/lib': path.resolve(__dirname, './src/lib'),
     },
   },
+  // Build configuration
+  build: {
+    outDir: 'dist',
+    sourcemap: true, // Enable source maps for debugging
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // Split vendor chunks for better caching
+          react: ['react', 'react-dom', 'react-router-dom'],
+          ui: ['@mantine/core', '@mantine/hooks', '@mantine/form'],
+          aws: ['@aws-sdk/client-cognito-identity-provider', 'aws-amplify']
+        }
+      }
+    }
+  },
+  // Server and proxy configuration
   server: {
     port: 3000,
+    strictPort: true, // Exit if port is in use
     proxy: {
+      // API proxy configuration
       '/api': {
         target: process.env.VITE_API_URL || 'http://localhost:4000',
         changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
-    },
+      // Local development fallback
+      '^/api/.*': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
+  // Preview configuration (for local preview of production build)
+  preview: {
+    port: 3000,
+    strictPort: true,
+  }
 });
