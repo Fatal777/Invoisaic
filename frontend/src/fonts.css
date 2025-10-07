@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Museo Moderno Custom';
+  src: url('/fonts/MuseoModerno-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}

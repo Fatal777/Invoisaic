@@ -1,0 +1,78 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+
+# Production
+build/
+dist/
+
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# AWS
+.aws-sam/
+cdk.out/
+cdk.context.json
+
+# IDE
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+.env
+
+# Build outputs
+frontend/build/
+frontend/dist/
+
+# CDK asset staging directory
+.cdk.staging/
+
+# AWS CloudFormation generated files
+template.yaml
+*.template.json
+
+# Local development
+.aws-sam/
+
+# Lock files
+yarn.lock
+package-lock.json
+
+# CDK
+cdk.out/
+
+# Frontend build artifacts
+frontend/.next/
+frontend/out/
+
+# Backend
+backend/.build/
+
+# Logs
+logs
+*.log
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+*~
