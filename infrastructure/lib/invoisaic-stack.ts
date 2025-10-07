@@ -398,14 +398,22 @@ export class InvoisaicStack extends cdk.Stack {
     const api = new apigateway.RestApi(this, 'InvoisaicAPI', {
       restApiName: `invoisaic-api-${environment}`,
       description: 'Invoisaic AI Invoice Automation API',
-      deployOptions: {
-        stageName: 'prod',
-        description: `Production API for ${environment}`,
-      },
       defaultCorsPreflightOptions: {
         allowOrigins: apigateway.Cors.ALL_ORIGINS,
         allowMethods: apigateway.Cors.ALL_METHODS,
-        allowHeaders: ['Content-Type', 'Authorization'],
+        allowHeaders: [
+          'Content-Type',
+          'X-Amz-Date',
+          'Authorization',
+          'X-Api-Key',
+          'X-Amz-Security-Token',
+          'X-Amz-User-Agent'
+        ],
+        allowCredentials: true
+      },
+      deployOptions: {
+        stageName: 'prod',
+        description: `Production API for ${environment}`
       },
     });
 
