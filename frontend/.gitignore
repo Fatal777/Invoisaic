@@ -1,7 +1,3 @@
-# Deployment
-.vercel
-.railway
-
 # Dependencies
 node_modules
 .pnp
@@ -21,6 +17,7 @@ build
 .env.test.local
 .env.production.local
 .env.production
+!.env.example
 
 # Logs
 npm-debug.log*
@@ -41,6 +38,9 @@ lerna-debug.log*
 *.sw?
 
 # Temporary files
-*.log
 *.tmp
 .cache
+
+# Deployment
+.vercel
+.railway
