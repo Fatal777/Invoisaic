@@ -112,10 +112,14 @@ export default function Landing() {
       <InteractiveHero />
 
       {/* Stacking Cards - Scroll-Locked Peel Effect */}
-      <section ref={sectionRef} className="relative bg-gray-900">
+      <section ref={sectionRef} className={`relative transition-colors duration-500 ${
+        theme === 'dark' ? 'bg-black' : 'bg-gray-50'
+      }`}>
         {/* Title Section */}
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8 text-center">
-          <h2 className="text-4xl md:text-6xl font-bold text-white">Powerful Features</h2>
+          <h2 className={`text-4xl md:text-6xl font-bold transition-colors duration-500 ${
+            theme === 'dark' ? 'text-white' : 'text-gray-900'
+          }`}>Powerful Features</h2>
         </div>
         
         {/* Card Stack Container - This creates the scroll-lock effect */}

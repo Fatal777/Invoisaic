@@ -18,13 +18,19 @@ export default function InteractiveHero() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
   
-  // Generate random dots for background
-  const backgroundDots = Array.from({ length: 50 }, (_, i) => ({
-    id: i,
-    x: Math.random() * 100,
-    y: Math.random() * 100,
-    size: Math.random() * 4 + 2,
-  }));
+  // Generate organized grid of dots for background
+  const backgroundDots = [];
+  const rows = 12;
+  const cols = 20;
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < cols; col++) {
+      backgroundDots.push({
+        id: row * cols + col,
+        x: (col / (cols - 1)) * 100,
+        y: (row / (rows - 1)) * 100,
+      });
+    }
+  }
 
   const stats = [
     { value: '98%', label: 'Accuracy' },
@@ -58,37 +64,47 @@ export default function InteractiveHero() {
             : 'bg-gradient-to-br from-[#EFA498]/30 to-gray-100/20'
         }`} />
         
-        {/* Interactive Dots */}
+        {/* Interactive Grid Dots */}
         {backgroundDots.map((dot) => {
+          // Calculate distance from mouse to dot
+          const dotX = (dot.x / 100) * (typeof window !== 'undefined' ? window.innerWidth : 1920);
+          const dotY = (dot.y / 100) * (typeof window !== 'undefined' ? window.innerHeight : 1080);
           const distance = Math.sqrt(
-            Math.pow((dot.x / 100) * window.innerWidth - mousePosition.x, 2) +
-            Math.pow((dot.y / 100) * window.innerHeight - mousePosition.y, 2)
+            Math.pow(dotX - mousePosition.x, 2) +
+            Math.pow(dotY - mousePosition.y, 2)
           );
-          const isNear = distance < 150;
+          
+          // Interaction radius
+          const interactionRadius = 120;
+          const isNear = distance < interactionRadius;
+          
+          // Calculate scale based on distance (closer = bigger)
+          const proximityScale = isNear 
+            ? 1 + (1 - distance / interactionRadius) * 1.5 
+            : 1;
           
           return (
             <motion.div
               key={dot.id}
-              className={`absolute rounded-full cursor-pointer ${
+              className={`absolute rounded-full pointer-events-none ${
                 theme === 'dark' ? 'bg-[#F97272]' : 'bg-[#EFA498]'
               }`}
               style={{
                 left: `${dot.x}%`,
                 top: `${dot.y}%`,
-                width: dot.size,
-                height: dot.size,
+                width: 3,
+                height: 3,
+                transform: 'translate(-50%, -50%)',
               }}
               animate={{
-                scale: isNear || hoveredDot === dot.id ? 3 : 1,
-                opacity: isNear || hoveredDot === dot.id ? 1 : 0.3,
+                scale: proximityScale,
+                opacity: isNear ? 0.9 : 0.2,
               }}
               transition={{
                 type: 'spring',
-                stiffness: 300,
-                damping: 20,
+                stiffness: 400,
+                damping: 25,
               }}
-              onMouseEnter={() => setHoveredDot(dot.id)}
-              onMouseLeave={() => setHoveredDot(null)}
             />
           );
         })}

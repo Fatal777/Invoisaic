@@ -1,9 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/clerk-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from './ui/Button';
-import Logo from './Logo';
 import { useTheme } from '../context/ThemeContext';
+import Logo from './Logo';
 import { ArrowLeft, Play, Activity, Zap, FileText, Brain, DollarSign, LogIn, UserPlus, Menu, X, Sun, Moon } from 'lucide-react';
 
 interface NavbarProps {
@@ -56,7 +57,7 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <Logo size="sm" dark={!isDark} />
+            <Logo size="sm" dark={isDark} />
           </Link>
 
           {/* Agent Status Center (Center of navbar) */}
@@ -120,7 +121,7 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
               Architecture
             </Link>
             
-            {/* Theme Toggle */}
+            {/* Theme Toggle with Animation */}
             <button
               onClick={toggleTheme}
               className={`p-2 transition-all duration-200 ${
@@ -130,11 +131,29 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
               }`}
               aria-label="Toggle theme"
             >
-              {isDark ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
+              <AnimatePresence mode="wait">
+                {isDark ? (
+                  <motion.div
+                    key="sun"
+                    initial={{ rotate: -180, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 180, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <Sun className="h-5 w-5" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="moon"
+                    initial={{ rotate: 180, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -180, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                  >
+                    <Moon className="h-5 w-5" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </button>
             
             {/* Divider */}

@@ -34,19 +34,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setIsTransitioning(true);
-    
-    // Add smooth transition class to body
-    document.documentElement.style.setProperty('--theme-transition-duration', '500ms');
-    
-    setTimeout(() => {
-      setTheme(prev => prev === 'light' ? 'dark' : 'light');
-      
-      setTimeout(() => {
-        setIsTransitioning(false);
-        document.documentElement.style.removeProperty('--theme-transition-duration');
-      }, 500);
-    }, 50);
+    // Immediately toggle theme for instant response
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
   return (
