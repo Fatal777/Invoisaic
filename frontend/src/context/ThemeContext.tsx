@@ -15,13 +15,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     const savedTheme = localStorage.getItem('theme') as Theme;
     if (savedTheme) return savedTheme;
     
-    // Check system preference
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      return 'dark';
-    }
-    
-    return 'light';
+    // Default to dark mode
+    return 'dark';
   });
+  
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
     // Save to localStorage
@@ -36,7 +34,19 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+    setIsTransitioning(true);
+    
+    // Add smooth transition class to body
+    document.documentElement.style.setProperty('--theme-transition-duration', '500ms');
+    
+    setTimeout(() => {
+      setTheme(prev => prev === 'light' ? 'dark' : 'light');
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+        document.documentElement.style.removeProperty('--theme-transition-duration');
+      }, 500);
+    }, 50);
   };
 
   return (

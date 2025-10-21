@@ -47,22 +47,23 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
   }, [showAgentStatus]);
   
   return (
-    <nav className={`backdrop-blur-2xl sticky top-4 z-50 mx-4 rounded-2xl transition-all ${
+    <nav className={`sticky top-4 z-50 mx-4 rounded-2xl transition-all ${
       isDark 
-        ? 'bg-gradient-to-r from-gray-950/95 via-gray-900/95 to-gray-950/95 border border-gray-700/40 shadow-2xl shadow-black/50 ring-1 ring-white/10' 
-        : 'bg-white/80 border border-gray-200/50 shadow-2xl'
+        ? 'bg-white text-gray-900 shadow-lg border border-gray-200' 
+        : 'bg-gray-900 text-white shadow-lg border border-gray-800'
     }`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
             <Logo size="sm" dark={!isDark} />
+            <span className="ml-2 text-lg font-semibold">Invoisaic</span>
           </Link>
 
           {/* Agent Status Center (Center of navbar) */}
           {showAgentStatus && (
             <div className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 rounded-full border border-gray-700">
-              <Activity className="w-4 h-4 text-green-400 animate-pulse" />
+              <Activity className={`w-4 h-4 ${isDark ? 'text-blue-600' : 'text-blue-400'} animate-pulse`} />
               <div className="flex items-center gap-3">
                 {agentStatuses.map(agent => (
                   <div
@@ -166,14 +167,18 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
                 afterSignOutUrl="/"
                 appearance={{
                   elements: {
-                    avatarBox: 'w-10 h-10 ring-2 ring-[#FEF5F4]0/20 hover:ring-[#FEF5F4]0/40 transition-all',
-                    userButtonPopoverCard: isDark ? 'bg-gray-900 border border-gray-800 shadow-2xl' : 'bg-white border border-gray-200 shadow-2xl',
-                    userButtonPopoverActionButton: isDark ? 'hover:bg-gray-800 text-gray-300 hover:text-white' : 'hover:bg-gray-100 text-gray-700',
-                    userButtonPopoverActionButtonText: 'font-medium',
-                    userButtonPopoverActionButtonIcon: isDark ? 'text-gray-400' : 'text-gray-500',
-                    userButtonPopoverFooter: isDark ? 'border-t border-gray-800' : 'border-t border-gray-200',
-                    userPreviewMainIdentifier: isDark ? 'text-white font-semibold' : 'text-gray-900 font-semibold',
-                    userPreviewSecondaryIdentifier: isDark ? 'text-gray-400' : 'text-gray-600',
+                    avatarBox: 'w-10 h-10 ring-2 ring-[#F97272]/20 hover:ring-[#F97272]/40 transition-all',
+                    userButtonPopoverCard: isDark 
+                      ? 'bg-white border border-gray-200 shadow-2xl' 
+                      : 'bg-gray-900 border border-gray-700 shadow-2xl',
+                    userButtonPopoverActionButton: isDark 
+                      ? 'hover:bg-gray-100 text-gray-900 hover:text-black' 
+                      : 'hover:bg-gray-800 text-gray-100 hover:text-white',
+                    userButtonPopoverActionButtonText: isDark ? 'text-gray-900 font-medium' : 'text-gray-100 font-medium',
+                    userButtonPopoverActionButtonIcon: isDark ? 'text-gray-700' : 'text-gray-300',
+                    userButtonPopoverFooter: isDark ? 'border-t border-gray-200' : 'border-t border-gray-700',
+                    userPreviewMainIdentifier: isDark ? 'text-gray-900 font-semibold' : 'text-white font-semibold',
+                    userPreviewSecondaryIdentifier: isDark ? 'text-gray-600' : 'text-gray-300',
                   }
                 }}
               />

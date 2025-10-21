@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import Logo from '@/components/Logo';
 import Navbar from '@/components/Navbar';
 import Chatbot from '@/components/Chatbot';
+import InteractiveHero from '@/components/InteractiveHero';
 import { useTheme } from '@/context/ThemeContext';
 import {
   FileText, Globe, TrendingUp,
@@ -100,120 +102,14 @@ export default function Landing() {
   ];
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
+    <div className={`min-h-screen transition-colors duration-500 ${
       theme === 'dark' ? 'bg-black' : 'bg-gray-50'
     }`}>
       <Navbar />
       <Chatbot />
 
-      {/* Hero Section */}
-      <section className={`relative overflow-hidden py-16 lg:py-24 transition-colors duration-300 ${
-        theme === 'dark'
-          ? 'bg-gradient-to-br from-zinc-950 via-black to-zinc-950'
-          : 'bg-gradient-to-br from-gray-100 via-white to-gray-100'
-      }`}>
-        {/* 3D Background Elements */}
-        <div className="absolute inset-0">
-          {theme === 'dark' ? (
-            <>
-              <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-[#F97272]/15 to-zinc-900/10 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-zinc-800/10 to-black/5 rounded-full blur-3xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#F97272]/8 to-zinc-900/5 rounded-full blur-3xl" />
-            </>
-          ) : (
-            <>
-              <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-[#EFA498]/30 to-gray-100/30 rounded-full blur-3xl animate-pulse" />
-              <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-gray-200/20 to-gray-100/20 rounded-full blur-3xl" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#EFA498]/30 to-gray-100/20 rounded-full blur-3xl" />
-            </>
-          )}
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-          <div className="text-center relative">
-            {/* Badge */}
-            <div className={`inline-flex items-center gap-2 mb-8 px-5 py-3 rounded-full transition-colors ${
-              theme === 'dark'
-                ? 'border border-zinc-800 bg-zinc-900/80 backdrop-blur-xl'
-                : 'border border-gray-300 bg-white shadow-sm'
-            }`}>
-              <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${
-                theme === 'dark' ? 'bg-[#F97272]' : 'bg-[#EFA498]'
-              }`} />
-              <span className={`text-sm uppercase tracking-wider font-medium ${
-                theme === 'dark' ? 'text-zinc-300' : 'text-gray-700'
-              }`}>Powered by Amazon Bedrock Nova Micro</span>
-            </div>
-            
-            <h1 className={`text-6xl md:text-8xl lg:text-9xl font-logo font-bold mb-8 leading-none tracking-tight transition-colors ${
-              theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              AI Invoice
-              <br />
-              <span className={theme === 'dark' ? 'text-[#F97272]' : 'text-[#EFA498]'}>
-                Automation
-              </span>
-            </h1>
-            
-            <p className={`text-xl md:text-2xl mb-12 max-w-3xl mx-auto font-light transition-colors ${
-              theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'
-            }`}>
-              Generate country-specific invoices in seconds.
-              <br />
-              Built for global businesses that demand precision.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16">
-              <Link to="/demo">
-                <button className={`text-white px-10 py-4 rounded-full text-lg font-medium transition-all hover:scale-105 flex items-center gap-2 shadow-lg ${
-                  theme === 'dark'
-                    ? 'bg-[#F97272] hover:bg-[#f85c5c] shadow-[#F97272]/30'
-                    : 'bg-[#EFA498] hover:bg-[#F97272] shadow-[#EFA498]/30'
-                }`}>
-                  <Play className="h-5 w-5" />
-                  Live Demo
-                </button>
-              </Link>
-              <Link to="/features">
-                <button className={`border-2 px-10 py-4 rounded-full text-lg font-medium transition-all hover:scale-105 flex items-center gap-2 shadow-sm ${
-                  theme === 'dark'
-                    ? 'border-zinc-700 hover:border-zinc-600 text-white bg-zinc-900'
-                    : 'border-gray-300 hover:border-gray-400 text-gray-900 bg-white'
-                }`}>
-                  Explore Features
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-              </Link>
-            </div>
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
-              {stats.map((stat, idx) => (
-                <div key={idx} className="relative group">
-                  <div className={`absolute inset-0 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity ${
-                    theme === 'dark'
-                      ? 'bg-gradient-to-br from-[#F97272]/30 to-[#f85c5c]/20'
-                      : 'bg-gradient-to-br from-[#EFA498]/20 to-[#F97272]/20'
-                  }`} />
-                  <div className={`relative border-2 rounded-3xl p-8 hover:-translate-y-1 transition-all shadow-lg ${
-                    theme === 'dark'
-                      ? 'border-zinc-800 bg-zinc-950 hover:border-[#F97272]'
-                      : 'border-gray-200 bg-white hover:border-[#EFA498]'
-                  }`}>
-                    <div className={`text-5xl font-bold mb-3 transition-colors ${
-                      theme === 'dark'
-                        ? 'text-white group-hover:text-[#F97272]'
-                        : 'text-gray-900 group-hover:text-[#EFA498]'
-                    }`}>{stat.value}</div>
-                    <div className={`text-sm uppercase tracking-wider ${
-                      theme === 'dark' ? 'text-zinc-400' : 'text-gray-600'
-                    }`}>{stat.label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Interactive Hero Section */}
+      <InteractiveHero />
 
       {/* Stacking Cards - Scroll-Locked Peel Effect */}
       <section ref={sectionRef} className="relative bg-gray-900">

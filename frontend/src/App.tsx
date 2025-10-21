@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/authStore';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/layout/Layout';
+import AppleCursor from './components/AppleCursor';
 import Landing from './pages/Landing';
 import Dashboard from './pages/Dashboard';
 import Invoices from './pages/Invoices';
@@ -35,7 +36,9 @@ function App() {
   const { isAuthenticated } = useAuthStore();
 
   return (
-    <Routes>
+    <>
+      <AppleCursor />
+      <Routes>
       {/* Public routes - no auth required */}
       <Route path="/" element={<Landing />} />
       
@@ -80,6 +83,7 @@ function App() {
       
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </>
   );
 }
 
