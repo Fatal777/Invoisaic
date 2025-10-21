@@ -1,39 +1,30 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Play, ArrowRight } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 
 export default function InteractiveHero() {
   const { theme } = useTheme();
-  
-  // Smooth mouse tracking for background orbs and 3D parallax
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-  
-  const springConfig = { damping: 25, stiffness: 150 };
-  const x = useSpring(mouseX, springConfig);
-  const y = useSpring(mouseY, springConfig);
-  
-  // 3D Parallax effects for text
-  const rotateX = useTransform(y, [-300, 300], [5, -5]);
-  const rotateY = useTransform(x, [-300, 300], [-5, 5]);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [hoveredDot, setHoveredDot] = useState<number | null>(null);
   
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      const { clientX, clientY } = e;
-      const { innerWidth, innerHeight } = window;
-      
-      const x = clientX - innerWidth / 2;
-      const y = clientY - innerHeight / 2;
-      
-      mouseX.set(x);
-      mouseY.set(y);
+      setMousePosition({ x: e.clientX, y: e.clientY });
     };
     
     window.addEventListener('mousemove', handleMouseMove);
     return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [mouseX, mouseY]);
+  }, []);
+  
+  // Generate random dots for background
+  const backgroundDots = Array.from({ length: 50 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 4 + 2,
+  }));
 
   const stats = [
     { value: '98%', label: 'Accuracy' },
@@ -48,80 +39,59 @@ export default function InteractiveHero() {
         ? 'bg-gradient-to-br from-zinc-950 via-black to-zinc-950'
         : 'bg-gradient-to-br from-gray-100 via-white to-gray-100'
     }`}>
-      {/* Animated Background Orbs */}
+      {/* Interactive Background Dots */}
       <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className={`absolute w-96 h-96 rounded-full blur-3xl ${
-            theme === 'dark'
-              ? 'bg-gradient-to-br from-[#F97272]/15 to-zinc-900/10'
-              : 'bg-gradient-to-br from-[#EFA498]/30 to-gray-100/30'
-          }`}
-          style={{
-            top: '10%',
-            right: '10%',
-            x: useTransform(x, [-300, 300], [-30, 30]),
-            y: useTransform(y, [-300, 300], [-30, 30]),
-          }}
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+        {/* Gradient Orbs */}
+        <div className={`absolute top-20 right-20 w-96 h-96 rounded-full blur-3xl animate-pulse ${
+          theme === 'dark'
+            ? 'bg-gradient-to-br from-[#F97272]/15 to-zinc-900/10'
+            : 'bg-gradient-to-br from-[#EFA498]/30 to-gray-100/30'
+        }`} />
+        <div className={`absolute bottom-20 left-20 w-96 h-96 rounded-full blur-3xl ${
+          theme === 'dark'
+            ? 'bg-gradient-to-br from-zinc-800/10 to-black/5'
+            : 'bg-gradient-to-br from-gray-200/20 to-gray-100/20'
+        }`} />
+        <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full blur-3xl ${
+          theme === 'dark'
+            ? 'bg-gradient-to-br from-[#F97272]/8 to-zinc-900/5'
+            : 'bg-gradient-to-br from-[#EFA498]/30 to-gray-100/20'
+        }`} />
         
-        <motion.div
-          className={`absolute w-96 h-96 rounded-full blur-3xl ${
-            theme === 'dark'
-              ? 'bg-gradient-to-br from-zinc-800/10 to-black/5'
-              : 'bg-gradient-to-br from-gray-200/20 to-gray-100/20'
-          }`}
-          style={{
-            bottom: '10%',
-            left: '10%',
-            x: useTransform(x, [-300, 300], [30, -30]),
-            y: useTransform(y, [-300, 300], [30, -30]),
-          }}
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1,
-          }}
-        />
-        
-        <motion.div
-          className={`absolute w-[600px] h-[600px] rounded-full blur-3xl ${
-            theme === 'dark'
-              ? 'bg-gradient-to-br from-[#F97272]/8 to-zinc-900/5'
-              : 'bg-gradient-to-br from-[#EFA498]/30 to-gray-100/20'
-          }`}
-          style={{
-            top: '50%',
-            left: '50%',
-            x: useTransform(x, [-300, 300], [-20, 20]),
-            y: useTransform(y, [-300, 300], [-20, 20]),
-            translateX: '-50%',
-            translateY: '-50%',
-          }}
-          animate={{
-            scale: [1, 1.15, 1],
-            opacity: [0.2, 0.35, 0.2],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 2,
-          }}
-        />
+        {/* Interactive Dots */}
+        {backgroundDots.map((dot) => {
+          const distance = Math.sqrt(
+            Math.pow((dot.x / 100) * window.innerWidth - mousePosition.x, 2) +
+            Math.pow((dot.y / 100) * window.innerHeight - mousePosition.y, 2)
+          );
+          const isNear = distance < 150;
+          
+          return (
+            <motion.div
+              key={dot.id}
+              className={`absolute rounded-full cursor-pointer ${
+                theme === 'dark' ? 'bg-[#F97272]' : 'bg-[#EFA498]'
+              }`}
+              style={{
+                left: `${dot.x}%`,
+                top: `${dot.y}%`,
+                width: dot.size,
+                height: dot.size,
+              }}
+              animate={{
+                scale: isNear || hoveredDot === dot.id ? 3 : 1,
+                opacity: isNear || hoveredDot === dot.id ? 1 : 0.3,
+              }}
+              transition={{
+                type: 'spring',
+                stiffness: 300,
+                damping: 20,
+              }}
+              onMouseEnter={() => setHoveredDot(dot.id)}
+              onMouseLeave={() => setHoveredDot(null)}
+            />
+          );
+        })}
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
@@ -158,27 +128,21 @@ export default function InteractiveHero() {
             </span>
           </motion.div>
 
-          {/* Main Heading with 3D Parallax */}
-          <motion.div
+          {/* Main Heading */}
+          <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            style={{
-              rotateX,
-              rotateY,
-              transformStyle: 'preserve-3d',
-            }}
-          >
-            <h1 className={`text-6xl md:text-8xl lg:text-9xl font-logo font-bold mb-8 leading-none tracking-tight transition-colors ${
+            className={`text-6xl md:text-8xl lg:text-9xl font-logo font-bold mb-8 leading-none tracking-tight transition-colors ${
               theme === 'dark' ? 'text-white' : 'text-gray-900'
-            }`}>
-              AI Invoice
-              <br />
-              <span className={theme === 'dark' ? 'text-[#F97272]' : 'text-[#EFA498]'}>
-                Automation
-              </span>
-            </h1>
-          </motion.div>
+            }`}
+          >
+            AI Invoice
+            <br />
+            <span className={theme === 'dark' ? 'text-[#F97272]' : 'text-[#EFA498]'}>
+              Automation
+            </span>
+          </motion.h1>
 
           {/* Description - Keep Original */}
           <motion.p

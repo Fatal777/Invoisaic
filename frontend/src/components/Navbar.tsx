@@ -57,7 +57,6 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
           {/* Logo */}
           <Link to="/" className="flex items-center group">
             <Logo size="sm" dark={!isDark} />
-            <span className="ml-2 text-lg font-semibold">Invoisaic</span>
           </Link>
 
           {/* Agent Status Center (Center of navbar) */}

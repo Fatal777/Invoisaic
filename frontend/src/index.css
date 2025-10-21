@@ -63,19 +63,11 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    cursor: none; /* Hide default cursor for custom cursor */
   }
   
   /* Smooth theme transitions */
   html {
     transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  /* Show default cursor on mobile */
-  @media (hover: none) and (pointer: coarse) {
-    body {
-      cursor: auto;
-    }
   }
 }
 
