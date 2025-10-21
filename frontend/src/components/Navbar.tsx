@@ -90,7 +90,7 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
           {/* Navigation Links */}
           <div className="hidden md:flex items-center gap-6">
             <Link 
-              to="/#features" 
+              to="/features" 
               className={`text-sm font-medium tracking-wide transition-all duration-200 ${
                 isDark 
                   ? 'text-gray-400 hover:text-[#EFA498]' 
@@ -200,7 +200,7 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 pb-4 border-t border-gray-700/40 pt-4 space-y-2">
             <Link
-              to="/#features"
+              to="/features"
               onClick={() => setIsMobileMenuOpen(false)}
               className={`block px-4 py-3 text-sm font-medium transition-all duration-200 ${
                 isDark

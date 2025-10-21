@@ -13,7 +13,8 @@ export default function Logo({ className = '', size = 'md', dark = false }: Logo
   };
 
   const textColor = dark ? 'text-gray-900' : 'text-white';
-  const accentColor = dark ? 'text-blue-600' : 'text-[#EFA498]';
+  // Peach color for both light and dark modes
+  const accentColor = dark ? 'text-[#EFA498]' : 'text-[#F97272]';
 
   return (
     <div className={`font-logo ${sizes[size]} tracking-tighter ${className}`} style={{ fontWeight: 800 }}>

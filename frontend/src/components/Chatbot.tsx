@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MessageCircle, X, Send, Mail, Phone, ExternalLink } from 'lucide-react';
+import { MessageCircle, X, Send, Mail, Phone, Sparkles } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 export default function Chatbot() {
@@ -76,14 +76,18 @@ export default function Chatbot() {
       {/* Chat Button - Bottom Right */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white p-4 rounded-full shadow-2xl shadow-orange-500/50 transition-all hover:scale-110 group"
+        className={`fixed bottom-6 right-6 z-50 text-white p-4 rounded-full shadow-2xl transition-all hover:scale-110 group ${
+          theme === 'dark'
+            ? 'bg-gradient-to-r from-[#F97272] to-[#f85c5c] hover:from-[#f85c5c] hover:to-[#e64545] shadow-[#F97272]/50'
+            : 'bg-gradient-to-r from-[#EFA498] to-[#F97272] hover:from-[#F97272] hover:to-[#f85c5c] shadow-[#EFA498]/50'
+        }`}
         aria-label="Open chat"
       >
         {isOpen ? (
           <X className="w-6 h-6" />
         ) : (
           <>
-            <MessageCircle className="w-6 h-6" />
+            <Sparkles className="w-6 h-6" />
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
           </>
         )}
@@ -97,15 +101,19 @@ export default function Chatbot() {
             : 'bg-white border-gray-200'
         }`}>
           {/* Header */}
-          <div className="bg-gradient-to-r from-orange-600 to-orange-500 p-4 text-white">
+          <div className={`p-4 text-white transition-colors ${
+            theme === 'dark'
+              ? 'bg-gradient-to-r from-[#F97272] to-[#f85c5c]'
+              : 'bg-gradient-to-r from-[#EFA498] to-[#F97272]'
+          }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5" />
+                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                  <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold">Invoisaic Support</h3>
-                  <p className="text-xs text-[#FDDAD6]">We're here to help!</p>
+                  <h3 className="font-bold">Invoisaic AI Support</h3>
+                  <p className="text-xs text-white/80">Powered by AI</p>
                 </div>
               </div>
               <button
@@ -127,9 +135,11 @@ export default function Chatbot() {
                 className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
               >
                 <div
-                  className={`max-w-[80%] p-3 rounded-2xl ${
+                  className={`max-w-[80%] p-3 rounded-2xl transition-colors ${
                     message.isUser
-                      ? 'bg-orange-600 text-white rounded-br-sm'
+                      ? theme === 'dark'
+                        ? 'bg-[#F97272] text-white rounded-br-sm'
+                        : 'bg-[#EFA498] text-white rounded-br-sm'
                       : theme === 'dark'
                         ? 'bg-zinc-900 text-zinc-100 rounded-bl-sm shadow-sm border border-zinc-800'
                         : 'bg-white text-gray-800 rounded-bl-sm shadow-sm border border-gray-200'
@@ -152,8 +162,8 @@ export default function Chatbot() {
                     onClick={() => handleQuickQuestion(faq.question)}
                     className={`w-full text-left p-3 rounded-xl text-sm transition-colors border ${
                       theme === 'dark'
-                        ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border-zinc-800 hover:border-orange-500'
-                        : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200 hover:border-orange-300'
+                        ? 'bg-zinc-900 hover:bg-zinc-800 text-zinc-200 border-zinc-800 hover:border-[#F97272]'
+                        : 'bg-white hover:bg-gray-100 text-gray-700 border-gray-200 hover:border-[#EFA498]'
                     }`}
                   >
                     {faq.question}
@@ -177,8 +187,8 @@ export default function Chatbot() {
                 href="mailto:saadilkal.10@gmail.com"
                 className={`flex items-center gap-2 text-xs transition-colors ${
                   theme === 'dark'
-                    ? 'text-zinc-300 hover:text-orange-500'
-                    : 'text-gray-700 hover:text-orange-600'
+                    ? 'text-zinc-300 hover:text-[#F97272]'
+                    : 'text-gray-700 hover:text-[#EFA498]'
                 }`}
               >
                 <Mail className="w-3 h-3" />
@@ -188,8 +198,8 @@ export default function Chatbot() {
                 href="tel:+918792204995"
                 className={`flex items-center gap-2 text-xs transition-colors ${
                   theme === 'dark'
-                    ? 'text-zinc-300 hover:text-orange-500'
-                    : 'text-gray-700 hover:text-orange-600'
+                    ? 'text-zinc-300 hover:text-[#F97272]'
+                    : 'text-gray-700 hover:text-[#EFA498]'
                 }`}
               >
                 <Phone className="w-3 h-3" />
@@ -213,14 +223,18 @@ export default function Chatbot() {
                 placeholder="Type your message..."
                 className={`flex-1 px-4 py-2 border rounded-full focus:outline-none text-sm transition-colors ${
                   theme === 'dark'
-                    ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-500 focus:border-orange-500'
-                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-orange-500'
+                    ? 'bg-zinc-900 border-zinc-700 text-white placeholder-zinc-500 focus:border-[#F97272]'
+                    : 'bg-white border-gray-300 text-gray-900 placeholder-gray-500 focus:border-[#EFA498]'
                 }`}
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim()}
-                className="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white p-2 rounded-full transition-colors"
+                className={`text-white p-2 rounded-full transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed ${
+                  theme === 'dark'
+                    ? 'bg-[#F97272] hover:bg-[#f85c5c]'
+                    : 'bg-[#EFA498] hover:bg-[#F97272]'
+                }`}
               >
                 <Send className="w-5 h-5" />
               </button>
