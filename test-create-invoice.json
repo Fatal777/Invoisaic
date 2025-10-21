@@ -1,0 +1,8 @@
+{
+  "httpMethod": "POST",
+  "path": "/invoices",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "body": "{\"customerId\":\"cust-123\",\"customerName\":\"Test Customer\",\"customerEmail\":\"test@example.com\",\"issueDate\":\"2025-10-02\",\"dueDate\":\"2025-11-02\",\"currency\":\"USD\",\"lineItems\":[{\"description\":\"Test Service\",\"quantity\":1,\"unitPrice\":100,\"amount\":100}],\"subtotal\":100,\"totalAmount\":100,\"jurisdiction\":\"US\"}"
+}

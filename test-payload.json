@@ -1,0 +1,6 @@
+{
+  "httpMethod": "GET",
+  "path": "/invoices",
+  "headers": {},
+  "queryStringParameters": {}
+}

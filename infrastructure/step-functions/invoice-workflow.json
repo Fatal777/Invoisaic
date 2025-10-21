@@ -1,0 +1,220 @@
+{
+  "Comment": "Autonomous Invoice Processing Workflow with Textract",
+  "StartAt": "ReceiveWebhook",
+  "States": {
+    "ReceiveWebhook": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "invoisaic-webhook-dev",
+        "Payload.$": "$"
+      },
+      "Next": "CheckDocumentType",
+      "ResultPath": "$.webhookResult"
+    },
+    "CheckDocumentType": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.hasDocument",
+          "BooleanEquals": true,
+          "Next": "ParallelProcessing"
+        }
+      ],
+      "Default": "DirectInvoiceGeneration"
+    },
+    "ParallelProcessing": {
+      "Type": "Parallel",
+      "Branches": [
+        {
+          "StartAt": "TextractExtraction",
+          "States": {
+            "TextractExtraction": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::lambda:invoke",
+              "Parameters": {
+                "FunctionName": "invoisaic-textract-processor-dev",
+                "Payload.$": "$"
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "GetCustomerHistory",
+          "States": {
+            "GetCustomerHistory": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::dynamodb:getItem",
+              "Parameters": {
+                "TableName": "invoisaic-customers-dev",
+                "Key": {
+                  "id": {
+                    "S.$": "$.customer.email"
+                  }
+                }
+              },
+              "End": true
+            }
+          }
+        },
+        {
+          "StartAt": "SageMakerCategorization",
+          "States": {
+            "SageMakerCategorization": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::sagemaker:invokeEndpoint",
+              "Parameters": {
+                "EndpointName": "invoice-categorization-endpoint",
+                "Body.$": "$"
+              },
+              "End": true
+            }
+          }
+        }
+      ],
+      "ResultPath": "$.parallelResults",
+      "Next": "AutonomousDecision"
+    },
+    "DirectInvoiceGeneration": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "invoisaic-autonomous-agent-dev",
+        "Payload.$": "$"
+      },
+      "Next": "CheckConfidence",
+      "ResultPath": "$.agentDecision"
+    },
+    "AutonomousDecision": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "invoisaic-autonomous-agent-dev",
+        "Payload": {
+          "textractData.$": "$.parallelResults[0]",
+          "customerHistory.$": "$.parallelResults[1]",
+          "categorization.$": "$.parallelResults[2]",
+          "originalData.$": "$"
+        }
+      },
+      "Next": "CheckConfidence",
+      "ResultPath": "$.agentDecision"
+    },
+    "CheckConfidence": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.agentDecision.Payload.confidence",
+          "NumericGreaterThan": 85,
+          "Next": "GenerateInvoice"
+        },
+        {
+          "Variable": "$.agentDecision.Payload.confidence",
+          "NumericGreaterThan": 70,
+          "Next": "HumanReview"
+        }
+      ],
+      "Default": "EscalateToExpert"
+    },
+    "GenerateInvoice": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "invoisaic-invoice-dev",
+        "Payload.$": "$.agentDecision.Payload"
+      },
+      "Next": "StoreInvoice",
+      "ResultPath": "$.invoice"
+    },
+    "StoreInvoice": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "invoisaic-invoices-dev",
+        "Item": {
+          "id": {
+            "S.$": "$.invoice.Payload.invoice_number"
+          },
+          "data": {
+            "S.$": "States.JsonToString($.invoice.Payload)"
+          },
+          "created_at": {
+            "S.$": "$$.State.EnteredTime"
+          }
+        }
+      },
+      "Next": "SendNotification",
+      "ResultPath": null
+    },
+    "SendNotification": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::events:putEvents",
+      "Parameters": {
+        "Entries": [
+          {
+            "Source": "invoisaic.workflow",
+            "DetailType": "InvoiceGenerated",
+            "Detail.$": "States.JsonToString($.invoice.Payload)"
+          }
+        ]
+      },
+      "Next": "StoreLearningData"
+    },
+    "StoreLearningData": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::dynamodb:putItem",
+      "Parameters": {
+        "TableName": "invoisaic-agents-dev",
+        "Item": {
+          "id": {
+            "S.$": "States.UUID()"
+          },
+          "type": {
+            "S": "learning"
+          },
+          "decision": {
+            "S.$": "States.JsonToString($.agentDecision.Payload)"
+          },
+          "result": {
+            "S": "success"
+          },
+          "timestamp": {
+            "N.$": "States.Format('{}', $$.State.EnteredTime)"
+          }
+        }
+      },
+      "Next": "Success"
+    },
+    "HumanReview": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke.waitForTaskToken",
+      "Parameters": {
+        "FunctionName": "invoisaic-human-review-dev",
+        "Payload": {
+          "taskToken.$": "$$.Task.Token",
+          "data.$": "$"
+        }
+      },
+      "Next": "GenerateInvoice",
+      "ResultPath": "$.reviewResult"
+    },
+    "EscalateToExpert": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:ap-south-1:123456789012:invoisaic-escalation",
+        "Message.$": "States.JsonToString($)"
+      },
+      "Next": "Failure"
+    },
+    "Success": {
+      "Type": "Succeed"
+    },
+    "Failure": {
+      "Type": "Fail",
+      "Error": "InvoiceProcessingFailed",
+      "Cause": "Low confidence or escalation required"
+    }
+  }
+}
