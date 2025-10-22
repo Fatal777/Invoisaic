@@ -652,33 +652,11 @@ export class InvoisaicStack extends cdk.Stack {
       proxy: true
     }));
 
-    // BEDROCK AGENT - Invoke Agent endpoint
+    // BEDROCK AGENT - Invoke Agent endpoint (CORS inherited from root API)
     const invokeAgent = api.root.addResource('invoke-agent');
     invokeAgent.addMethod('POST', new apigateway.LambdaIntegration(invokeBedrockAgentFunction, {
       proxy: true
     }));
-    invokeAgent.addMethod('OPTIONS', new apigateway.MockIntegration({
-      integrationResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-          'method.response.header.Access-Control-Allow-Methods': "'POST,OPTIONS'",
-          'method.response.header.Access-Control-Allow-Origin': "'*'",
-        },
-      }],
-      requestTemplates: {
-        'application/json': '{"statusCode": 200}',
-      },
-    }), {
-      methodResponses: [{
-        statusCode: '200',
-        responseParameters: {
-          'method.response.header.Access-Control-Allow-Headers': true,
-          'method.response.header.Access-Control-Allow-Methods': true,
-          'method.response.header.Access-Control-Allow-Origin': true,
-        },
-      }],
-    });
 
     // AUTONOMOUS SYSTEM - Webhook endpoint (single endpoint for all platforms)
     const webhook = api.root.addResource('webhook');
