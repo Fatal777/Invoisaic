@@ -198,7 +198,7 @@ Ready to help!`,
       const uploadData = await uploadResponse.json();
       setIsUploading(false);
 
-      addMessage('agent', `✅ Invoice uploaded successfully\n\n📍 S3 Key: \`${uploadData.s3Key}\``, 'orchestrator');
+      addMessage('agent', `✅ Invoice uploaded successfully\n\n📍 S3 Key: \`${uploadData.s3Key}\`\n📊 Extracted: ${uploadData.blockCount} blocks, ${uploadData.text?.length || 0} characters`, 'orchestrator');
 
       // Step 2: Invoke Orchestrator Agent
       updateAgentStatus('Orchestrator', 'running', 'Analyzing invoice with Bedrock agents...');
@@ -209,13 +209,15 @@ Ready to help!`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          inputText: `Process this invoice from S3: ${uploadData.s3Key}. Extract all fields, validate compliance, and provide a complete analysis.`,
+          inputText: `Process this invoice document:\n\n${uploadData.text}\n\nExtract all fields (vendor, amount, date, items, etc.), validate compliance against tax regulations, and provide a complete analysis.`,
           sessionId,
           agentType: 'orchestrator',
           enableTrace: true,
           sessionAttributes: {
             s3Key: uploadData.s3Key,
             fileName: selectedFile.name,
+            extractedText: uploadData.text,
+            blockCount: String(uploadData.blockCount),
           },
         }),
       });
@@ -249,7 +251,15 @@ Ready to help!`,
 
     } catch (error) {
       console.error('Processing error:', error);
-      addMessage('system', `❌ **Error:** ${error instanceof Error ? error.message : 'Unknown error occurred'}\n\nPlease check your API configuration and try again.`, 'error');
+      let errorMsg = 'Unknown error occurred';
+      
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      } else if (typeof error === 'string') {
+        errorMsg = error;
+      }
+      
+      addMessage('system', `❌ **Error:** ${errorMsg}\n\n**Troubleshooting:**\n- Verify API URL is set: \`${API_URL}\`\n- Check that /textract endpoint is working\n- Verify /invoke-agent endpoint exists\n- Check CloudWatch logs for Lambda errors`, 'error');
       updateAgentStatus('Orchestrator', 'failed', 'Processing failed');
     } finally {
       setIsProcessing(false);
