@@ -25,7 +25,9 @@ interface TraceEvent {
   failureReason?: string;
 }
 
-const API_ENDPOINT = import.meta.env.VITE_API_ENDPOINT || 'https://your-api-gateway.execute-api.us-east-1.amazonaws.com/prod';
+const API_URL = import.meta.env.VITE_API_URL || import.meta.env.VITE_API_ENDPOINT || 'https://your-api-gateway.execute-api.ap-south-1.amazonaws.com/prod';
+const ORCHESTRATOR_AGENT_ID = import.meta.env.VITE_ORCHESTRATOR_AGENT_ID || 'orchestrator-id';
+const ORCHESTRATOR_ALIAS_ID = import.meta.env.VITE_ORCHESTRATOR_ALIAS_ID || 'TSTALIASID';
 
 export default function AgentChat() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -52,14 +54,24 @@ export default function AgentChat() {
     const welcomeMessage: Message = {
       id: 'welcome',
       role: 'system',
-      content: `Welcome to Invoisaic Multi-Agent System! I'm the ${selectedAgent === 'supervisor' ? 'Supervisor Agent' : selectedAgent} ready to help you with invoice processing.
+      content: `👋 Welcome to Invoisaic AI Invoice Assistant!
 
-Try asking:
-• "Process invoice from S3"
-• "Check vendor history for Acme Corp"
-• "What are the US tax requirements?"
-• "Forecast cash flow for next 90 days"
-• "Analyze vendor concentration risks"`,
+I'm your intelligent invoice processing agent powered by AWS Bedrock. I can help you:
+
+📄 **Upload & Process Invoices**
+• Upload a PDF or image invoice
+• Extract all fields automatically
+• Validate against compliance rules
+• Detect fraudulent patterns
+
+💬 **Get Help**
+• Ask about tax compliance requirements
+• Check vendor information
+• Get cash flow forecasts
+
+🚀 **Get Started**
+• Click the upload button below to process an invoice
+• Or type your question in the chat box`,
       timestamp: new Date(),
     };
     setMessages([welcomeMessage]);
@@ -79,7 +91,7 @@ Try asking:
     setIsProcessing(true);
 
     try {
-      const response = await fetch(`${API_ENDPOINT}/invoke-agent`, {
+      const response = await fetch(`${API_URL}/invoke-agent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
