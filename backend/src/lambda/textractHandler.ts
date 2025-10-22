@@ -6,38 +6,19 @@ import { v4 as uuidv4 } from 'uuid';
 const s3Client = new S3Client({ region: process.env.AWS_REGION || 'ap-south-1' });
 const textractClient = new TextractClient({ region: process.env.AWS_REGION || 'ap-south-1' });
 
-// CORS Headers - Support multiple origins including production domain
-const getAllowedOrigin = (requestOrigin?: string): string => {
-  const allowedOrigins = [
-    'https://invoisaic.xyz',
-    'https://invoisaic.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:3000'
-  ];
-  
-  if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
-    return requestOrigin;
-  }
-  
-  // Default to production domain
-  return 'https://invoisaic.xyz';
-};
-
-const getCorsHeaders = (origin?: string) => ({
-  'Access-Control-Allow-Origin': getAllowedOrigin(origin),
-  'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,Accept',
-  'Access-Control-Allow-Methods': 'OPTIONS,POST,GET,PUT,DELETE',
-  'Access-Control-Max-Age': '86400',
+// CORS is handled by Lambda Function URL - DO NOT send CORS headers from Lambda code
+// to avoid duplicate header errors
+const getResponseHeaders = () => ({
   'Content-Type': 'application/json'
 });
 
 // Helper function to create consistent API responses
-const createResponse = (statusCode: number, body: any, origin?: string, additionalHeaders: Record<string, string> = {}): APIGatewayProxyResult => {
-  const corsHeaders = getCorsHeaders(origin);
+const createResponse = (statusCode: number, body: any, additionalHeaders: Record<string, string> = {}): APIGatewayProxyResult => {
+  const headers = getResponseHeaders();
   const response = {
     statusCode,
     headers: {
-      ...corsHeaders,
+      ...headers,
       ...additionalHeaders
     },
     body: typeof body === 'string' ? body : JSON.stringify(body)
@@ -48,7 +29,7 @@ const createResponse = (statusCode: number, body: any, origin?: string, addition
 };
 
 // Helper function to create error responses
-const createErrorResponse = (statusCode: number, message: string, origin?: string, error?: any): APIGatewayProxyResult => {
+const createErrorResponse = (statusCode: number, message: string, error?: any): APIGatewayProxyResult => {
   console.error(`Error ${statusCode}:`, message, error);
   console.error('Error details:', JSON.stringify({
     message: error?.message,
@@ -60,7 +41,7 @@ const createErrorResponse = (statusCode: number, message: string, origin?: strin
     success: false,
     error: message,
     ...(process.env.NODE_ENV === 'development' && { details: error?.message || error })
-  }, origin);
+  });
 };
 
 // Helper function to parse form data
@@ -106,20 +87,12 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   console.log('Event httpMethod:', event.httpMethod);
   console.log('Event body length:', event.body?.length || 0);
   
-  // Get origin from request
-  const origin = event.headers?.origin || event.headers?.Origin;
-  console.log('Request origin:', origin);
-  
-  // Handle CORS preflight
+  // CORS preflight is handled by Lambda Function URL - no need to handle here
   if (event.httpMethod === 'OPTIONS') {
-    console.log('Handling OPTIONS request');
-    const corsHeaders = getCorsHeaders(origin);
+    console.log('OPTIONS request - should be handled by Function URL CORS');
     return {
       statusCode: 200,
-      headers: {
-        ...corsHeaders,
-        'Content-Length': '0'
-      },
+      headers: getResponseHeaders(),
       body: ''
     };
   }
@@ -132,7 +105,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     const bucketName = process.env.S3_DOCUMENTS_BUCKET;
     if (!bucketName) {
-      return createErrorResponse(500, 'S3_DOCUMENTS_BUCKET environment variable is not set', origin);
+      return createErrorResponse(500, 'S3_DOCUMENTS_BUCKET environment variable is not set');
     }
 
     // Handle form data
@@ -146,7 +119,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         console.log('Boundary:', boundary);
         
         if (!boundary) {
-          return createErrorResponse(400, 'No boundary found in Content-Type header', origin);
+          return createErrorResponse(400, 'No boundary found in Content-Type header');
         }
         
         // API Gateway base64 encodes binary data
@@ -160,7 +133,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
         console.log('Form data keys:', Object.keys(formData));
         
         if (!formData.file) {
-          return createErrorResponse(400, 'No file found in form data. Make sure to use form field name "file" for the file upload.', origin);
+          return createErrorResponse(400, 'No file found in form data. Make sure to use form field name "file" for the file upload.');
         }
         
         // The file content is already binary string, convert to buffer
@@ -191,13 +164,13 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
             
             // Validate supported file types
             if (!['jpg', 'jpeg', 'png', 'pdf'].includes(fileExtension)) {
-              return createErrorResponse(400, `Unsupported file type: ${fileExtension}. Supported types: PDF, JPG, PNG`, origin);
+              return createErrorResponse(400, `Unsupported file type: ${fileExtension}. Supported types: PDF, JPG, PNG`);
             }
           }
         }
       } catch (error) {
         console.error('Error parsing form data:', error);
-        return createErrorResponse(400, 'Error parsing form data', origin, error);
+        return createErrorResponse(400, 'Error parsing form data', error);
       }
     } 
     // Handle direct file upload (base64)
@@ -206,7 +179,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       // For direct uploads, we'll assume PDF if no extension is provided
       fileName = `${fileName}.pdf`;
     } else {
-      return createErrorResponse(400, 'No file data provided', origin);
+      return createErrorResponse(400, 'No file data provided');
     }
 
     // Upload file to S3
@@ -248,7 +221,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
       console.log(`✅ Extracted ${blockCount} blocks, ${extractedText.length} characters from ${fileExtension.toUpperCase()}`);
     } else {
-      return createErrorResponse(400, `Unsupported file type: ${fileExtension}`, origin);
+      return createErrorResponse(400, `Unsupported file type: ${fileExtension}`);
     }
 
     console.log(`✅ Textract processing complete. Extracted ${extractedText.length} characters.`);
@@ -258,7 +231,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
       text: extractedText,
       s3Key: fileName,
       blockCount: blockCount
-    }, origin);
+    });
 
   } catch (error: any) {
     console.error('❌ Textract processing error:', error);
@@ -266,7 +239,6 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return createErrorResponse(
       error.statusCode || 500,
       'Textract processing failed',
-      origin,
       error
     );
   }
