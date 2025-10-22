@@ -110,12 +110,12 @@ export default function DeploymentStatus() {
     switch (status) {
       case 'PREPARED':
       case 'online':
-        return <Badge variant="success">Ready</Badge>;
+        return <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Ready</Badge>;
       case 'FAILED':
       case 'offline':
         return <Badge variant="destructive">Offline</Badge>;
       case 'NOT_PREPARED':
-        return <Badge variant="warning">Not Ready</Badge>;
+        return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/50">Not Ready</Badge>;
       default:
         return <Badge variant="secondary">Unknown</Badge>;
     }
@@ -197,28 +197,28 @@ export default function DeploymentStatus() {
                 <Database className="h-4 w-4 text-blue-500" />
                 <span className="text-sm">DynamoDB Tables</span>
               </div>
-              <Badge variant="success">Active</Badge>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
             </div>
             <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
               <div className="flex items-center space-x-2">
                 <Server className="h-4 w-4 text-purple-500" />
                 <span className="text-sm">Lambda Functions</span>
               </div>
-              <Badge variant="success">Active</Badge>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
             </div>
             <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
               <div className="flex items-center space-x-2">
                 <Network className="h-4 w-4 text-green-500" />
                 <span className="text-sm">API Gateway</span>
               </div>
-              <Badge variant="success">Active</Badge>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
             </div>
             <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
               <div className="flex items-center space-x-2">
                 <Cloud className="h-4 w-4 text-orange-500" />
                 <span className="text-sm">S3 Bucket</span>
               </div>
-              <Badge variant="success">Active</Badge>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Active</Badge>
             </div>
           </div>
         </CardContent>
@@ -238,7 +238,7 @@ export default function DeploymentStatus() {
                 ID: {import.meta.env.VITE_KNOWLEDGE_BASE_ID || 'Not configured'}
               </p>
             </div>
-            <Badge variant="success">Ready</Badge>
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/50">Ready</Badge>
           </div>
         </CardContent>
       </Card>
