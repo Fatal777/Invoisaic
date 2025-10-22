@@ -31,7 +31,7 @@ import OnboardingDemo from './pages/demos/OnboardingDemo';
 import AgentsDemo from './pages/demos/AgentsDemo';
 import LiveDocDemo from './pages/demos/LiveDocDemo';
 import AgentChatPage from './pages/AgentChatPage';
-import AgentDashboard from './pages/AgentDashboard';
+import RealAgentDashboard from './pages/RealAgentDashboard';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -42,7 +42,7 @@ function App() {
       <Route path="/" element={<Landing />} />
       
       {/* Agent Dashboard - Protected Route */}
-      <Route path="/agent-dashboard" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
+      <Route path="/agent-dashboard" element={<ProtectedRoute><RealAgentDashboard /></ProtectedRoute>} />
       
       {/* New Demo Hub - Protected Routes */}
       <Route path="/demo" element={<ProtectedRoute><DemoHub /></ProtectedRoute>} />

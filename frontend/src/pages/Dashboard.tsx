@@ -173,7 +173,7 @@ export default function Dashboard() {
       <Navbar variant="dark" />
       <div className="px-6 pt-24 pb-8 max-w-7xl mx-auto">
         {/* AI Agent CTA */}
-        <Link to="/agent-chat">
+        <Link to="/agent-dashboard">
           <Card className="bg-gradient-to-r from-blue-600 to-purple-600 border-none mb-6 cursor-pointer hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -182,8 +182,8 @@ export default function Dashboard() {
                     <Brain className="h-8 w-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-bold text-white mb-1">Process Invoice with AI Agent</h2>
-                    <p className="text-blue-100">Upload your invoice and let our intelligent agents handle extraction, validation, and compliance</p>
+                    <h2 className="text-2xl font-bold text-white mb-1">Real AI Agent Processing Dashboard</h2>
+                    <p className="text-blue-100">Upload invoices and chat with AWS Bedrock agents in real-time • Live extraction, validation & compliance</p>
                   </div>
                 </div>
                 <ArrowRight className="h-8 w-8 text-white animate-pulse" />
@@ -445,10 +445,16 @@ export default function Dashboard() {
                     View Analytics
                   </Button>
                 </Link>
-                <Link to="/agent-chat">
+                <Link to="/agent-dashboard">
                   <Button className="w-full justify-start bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white border-0">
                     <Brain className="h-4 w-4 mr-2" />
-                    Chat with AI Agent
+                    AI Agent Dashboard
+                  </Button>
+                </Link>
+                <Link to="/demo/livedoc">
+                  <Button className="w-full justify-start bg-white/5 hover:bg-white/10 text-white border-white/10">
+                    <Brain className="h-4 w-4 mr-2" />
+                    LiveDoc Demo
                   </Button>
                 </Link>
               </CardContent>
