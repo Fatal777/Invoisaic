@@ -33,7 +33,11 @@ interface InvokeAgentRequest {
 }
 
 export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = async (event) => {
-  console.log('Invoke Bedrock Agent Event:', JSON.stringify(event, null, 2));
+  console.log('🤖 Invoke Bedrock Agent Handler Started');
+  console.log('Event method:', event.httpMethod);
+  console.log('Event path:', event.path);
+  console.log('Event headers:', JSON.stringify(event.headers));
+  console.log('Event body length:', event.body?.length || 0);
 
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -123,7 +127,13 @@ export const handler: Handler<APIGatewayProxyEvent, APIGatewayProxyResult> = asy
       }),
     };
   } catch (error) {
-    console.error('Error invoking Bedrock agent:', error);
+    console.error('❌ Error invoking Bedrock agent:', error);
+    console.error('Error stack:', (error as any)?.stack);
+    console.error('Error details:', JSON.stringify({
+      message: (error as any)?.message,
+      code: (error as any)?.code,
+      name: (error as any)?.name,
+    }));
 
     return {
       statusCode: 500,

@@ -34,6 +34,12 @@ const createResponse = (statusCode: number, body: any, additionalHeaders: Record
 // Helper function to create error responses
 const createErrorResponse = (statusCode: number, message: string, error?: any): APIGatewayProxyResult => {
   console.error(`Error ${statusCode}:`, message, error);
+  console.error('Error details:', JSON.stringify({
+    message: error?.message,
+    code: error?.code,
+    statusCode: error?.statusCode,
+    name: error?.name
+  }));
   return createResponse(statusCode, {
     success: false,
     error: message,
@@ -82,6 +88,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
   console.log('Event headers:', JSON.stringify(event.headers));
   console.log('Event isBase64Encoded:', event.isBase64Encoded);
   console.log('Event httpMethod:', event.httpMethod);
+  console.log('Event body length:', event.body?.length || 0);
   
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
@@ -234,6 +241,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   } catch (error: any) {
     console.error('❌ Textract processing error:', error);
+    console.error('Error stack:', error?.stack);
     return createErrorResponse(
       error.statusCode || 500,
       'Textract processing failed',
