@@ -316,6 +316,42 @@ export class InvoisaicStack extends cdk.Stack {
 
     documentsBucket.grantReadWrite(textractFunction);
 
+    // BEDROCK AGENT RUNTIME - Direct agent invocation
+    const invokeBedrockAgentFunction = new lambda.Function(this, 'InvokeBedrockAgentFunction', {
+      functionName: `invoisaic-invoke-bedrock-agent-${environment}`,
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: 'lambda/invokeBedrockAgent.handler',
+      code: lambda.Code.fromAsset('../backend/dist'),
+      timeout: cdk.Duration.seconds(300),
+      memorySize: 1024,
+      environment: {
+        ORCHESTRATOR_AGENT_ID: orchestratorAgentId,
+        ORCHESTRATOR_ALIAS_ID: process.env.ORCHESTRATOR_ALIAS_ID || 'TSTALIASID',
+        EXTRACTION_AGENT_ID: extractionAgentId,
+        EXTRACTION_ALIAS_ID: process.env.EXTRACTION_ALIAS_ID || 'TSTALIASID',
+        COMPLIANCE_AGENT_ID: complianceAgentId,
+        COMPLIANCE_ALIAS_ID: process.env.COMPLIANCE_ALIAS_ID || 'TSTALIASID',
+        VALIDATION_AGENT_ID: validationAgentId,
+        VALIDATION_ALIAS_ID: process.env.VALIDATION_ALIAS_ID || 'TSTALIASID',
+        AWS_REGION: this.region,
+        REGION: this.region,
+        ENVIRONMENT: environment,
+      },
+    });
+
+    // Grant Bedrock Agent Runtime permissions
+    invokeBedrockAgentFunction.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: [
+          'bedrock-agent-runtime:InvokeAgent',
+          'bedrock-agent-runtime:Retrieve',
+          'bedrock-agent-runtime:RetrieveAndGenerate',
+        ],
+        resources: ['*'],
+      })
+    );
+
     // AGENT STATUS - Real-time agent monitoring
     const agentStatusFunction = new lambda.Function(this, 'AgentStatusFunction', {
       functionName: `invoisaic-agent-status-${environment}`,
@@ -607,6 +643,34 @@ export class InvoisaicStack extends cdk.Stack {
     textract.addMethod('POST', new apigateway.LambdaIntegration(textractFunction, {
       proxy: true
     }));
+
+    // BEDROCK AGENT - Invoke Agent endpoint
+    const invokeAgent = api.root.addResource('invoke-agent');
+    invokeAgent.addMethod('POST', new apigateway.LambdaIntegration(invokeBedrockAgentFunction, {
+      proxy: true
+    }));
+    invokeAgent.addMethod('OPTIONS', new apigateway.MockIntegration({
+      integrationResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+          'method.response.header.Access-Control-Allow-Methods': "'POST,OPTIONS'",
+          'method.response.header.Access-Control-Allow-Origin': "'*'",
+        },
+      }],
+      requestTemplates: {
+        'application/json': '{"statusCode": 200}',
+      },
+    }), {
+      methodResponses: [{
+        statusCode: '200',
+        responseParameters: {
+          'method.response.header.Access-Control-Allow-Headers': true,
+          'method.response.header.Access-Control-Allow-Methods': true,
+          'method.response.header.Access-Control-Allow-Origin': true,
+        },
+      }],
+    });
 
     // AUTONOMOUS SYSTEM - Webhook endpoint (single endpoint for all platforms)
     const webhook = api.root.addResource('webhook');
