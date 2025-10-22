@@ -333,7 +333,6 @@ export class InvoisaicStack extends cdk.Stack {
         COMPLIANCE_ALIAS_ID: process.env.COMPLIANCE_ALIAS_ID || 'TSTALIASID',
         VALIDATION_AGENT_ID: validationAgentId,
         VALIDATION_ALIAS_ID: process.env.VALIDATION_ALIAS_ID || 'TSTALIASID',
-        AWS_REGION: this.region,
         REGION: this.region,
         ENVIRONMENT: environment,
       },
@@ -347,10 +346,19 @@ export class InvoisaicStack extends cdk.Stack {
           'bedrock-agent-runtime:InvokeAgent',
           'bedrock-agent-runtime:Retrieve',
           'bedrock-agent-runtime:RetrieveAndGenerate',
+          'bedrock:InvokeModel',
+          'bedrock:InvokeModelWithResponseStream',
         ],
         resources: ['*'],
       })
     );
+
+    // Grant S3 access for document retrieval
+    documentsBucket.grantReadWrite(invokeBedrockAgentFunction);
+
+    // Grant DynamoDB access for logging and state
+    invoicesTable.grantReadWriteData(invokeBedrockAgentFunction);
+    agentsTable.grantReadWriteData(invokeBedrockAgentFunction);
 
     // AGENT STATUS - Real-time agent monitoring
     const agentStatusFunction = new lambda.Function(this, 'AgentStatusFunction', {
