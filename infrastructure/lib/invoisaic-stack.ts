@@ -10,8 +10,6 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 import * as sfn from 'aws-cdk-lib/aws-stepfunctions';
 import * as tasks from 'aws-cdk-lib/aws-stepfunctions-tasks';
 import { Construct } from 'constructs';
-import { BedrockAgentConstruct } from './bedrock-agent-construct';
-import { KnowledgeBaseConstruct } from './knowledge-base-construct';
 
 interface InvoisaicStackProps extends cdk.StackProps {
   environment: string;
@@ -188,15 +186,15 @@ export class InvoisaicStack extends cdk.Stack {
     invoicesTable.grantReadWriteData(analyticsFunction);
     customersTable.grantReadWriteData(analyticsFunction);
 
-    // Knowledge Base Construct
-    const knowledgeBase = new KnowledgeBaseConstruct(this, 'KnowledgeBase', {
-      environment,
-    });
+    // Use existing Knowledge Base (created manually in AWS Console)
+    const knowledgeBaseId = this.node.tryGetContext('knowledgeBaseId') || process.env.KNOWLEDGE_BASE_ID || '2DW2JBM2MN';
 
-    // Bedrock Agent Construct
-    const bedrockAgent = new BedrockAgentConstruct(this, 'BedrockAgent', {
-      environment,
-    });
+    // Use existing Bedrock Agents (created manually in AWS Console)
+    // Agent IDs should be passed via environment variables or context
+    const orchestratorAgentId = this.node.tryGetContext('orchestratorAgentId') || process.env.ORCHESTRATOR_AGENT_ID || 'HCARGCEHMP';
+    const extractionAgentId = this.node.tryGetContext('extractionAgentId') || process.env.EXTRACTION_AGENT_ID || 'K93HN5QKPX';
+    const complianceAgentId = this.node.tryGetContext('complianceAgentId') || process.env.COMPLIANCE_AGENT_ID || 'K2GYUI5YOK';
+    const validationAgentId = this.node.tryGetContext('validationAgentId') || process.env.VALIDATION_AGENT_ID || 'GTNAFH8LWX';
 
     const agenticDemoFunction = new lambda.Function(this, 'AgenticDemoFunction', {
       functionName: `invoisaic-agentic-demo-${environment}`,
@@ -206,9 +204,13 @@ export class InvoisaicStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(60),
       memorySize: 1024,
       environment: {
-        BEDROCK_AGENT_ID: bedrockAgent.agent.attrAgentId,
+        BEDROCK_AGENT_ID: orchestratorAgentId,
         BEDROCK_AGENT_ALIAS_ID: 'TSTALIASID',
         BEDROCK_MODEL_ID: 'apac.amazon.nova-micro-v1:0',
+        ORCHESTRATOR_AGENT_ID: orchestratorAgentId,
+        EXTRACTION_AGENT_ID: extractionAgentId,
+        COMPLIANCE_AGENT_ID: complianceAgentId,
+        VALIDATION_AGENT_ID: validationAgentId,
         ENVIRONMENT: environment,
       },
     });
@@ -252,8 +254,12 @@ export class InvoisaicStack extends cdk.Stack {
         DYNAMODB_CUSTOMERS_TABLE: customersTable.tableName,
         DYNAMODB_AGENTS_TABLE: agentsTable.tableName,
         S3_DOCUMENTS_BUCKET: documentsBucket.bucketName,
-        KNOWLEDGE_BASE_ID: knowledgeBase.knowledgeBaseId,
-        BEDROCK_AGENT_ID: bedrockAgent.agent.attrAgentId,
+        KNOWLEDGE_BASE_ID: knowledgeBaseId,
+        BEDROCK_AGENT_ID: orchestratorAgentId,
+        ORCHESTRATOR_AGENT_ID: orchestratorAgentId,
+        EXTRACTION_AGENT_ID: extractionAgentId,
+        COMPLIANCE_AGENT_ID: complianceAgentId,
+        VALIDATION_AGENT_ID: validationAgentId,
         REGION: this.region,
         ENVIRONMENT: environment,
       },
@@ -277,8 +283,12 @@ export class InvoisaicStack extends cdk.Stack {
         DYNAMODB_CUSTOMERS_TABLE: customersTable.tableName,
         DYNAMODB_AGENTS_TABLE: agentsTable.tableName,
         S3_DOCUMENTS_BUCKET: documentsBucket.bucketName,
-        KNOWLEDGE_BASE_ID: knowledgeBase.knowledgeBaseId,
-        BEDROCK_AGENT_ID: bedrockAgent.agent.attrAgentId,
+        KNOWLEDGE_BASE_ID: knowledgeBaseId,
+        BEDROCK_AGENT_ID: orchestratorAgentId,
+        ORCHESTRATOR_AGENT_ID: orchestratorAgentId,
+        EXTRACTION_AGENT_ID: extractionAgentId,
+        COMPLIANCE_AGENT_ID: complianceAgentId,
+        VALIDATION_AGENT_ID: validationAgentId,
         REGION: this.region,
         ENVIRONMENT: environment,
       },

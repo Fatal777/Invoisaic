@@ -30,6 +30,8 @@ import OCRDemo from './pages/demos/OCRDemo';
 import OnboardingDemo from './pages/demos/OnboardingDemo';
 import AgentsDemo from './pages/demos/AgentsDemo';
 import LiveDocDemo from './pages/demos/LiveDocDemo';
+import AgentChatPage from './pages/AgentChatPage';
+import AgentDashboard from './pages/AgentDashboard';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
@@ -39,6 +41,9 @@ function App() {
       {/* Public routes - no auth required */}
       <Route path="/" element={<Landing />} />
       
+      {/* Agent Dashboard - Protected Route */}
+      <Route path="/agent-dashboard" element={<ProtectedRoute><AgentDashboard /></ProtectedRoute>} />
+      
       {/* New Demo Hub - Protected Routes */}
       <Route path="/demo" element={<ProtectedRoute><DemoHub /></ProtectedRoute>} />
       <Route path="/demo/ecommerce" element={<ProtectedRoute><EcommerceDemo /></ProtectedRoute>} />
@@ -46,6 +51,9 @@ function App() {
       <Route path="/demo/onboarding" element={<ProtectedRoute><OnboardingDemo /></ProtectedRoute>} />
       <Route path="/demo/agents" element={<ProtectedRoute><AgentsDemo /></ProtectedRoute>} />
       <Route path="/demo/livedoc" element={<ProtectedRoute><LiveDocDemo /></ProtectedRoute>} />
+      
+      {/* Multi-Agent Chat */}
+      <Route path="/agent-chat" element={<AgentChatPage />} />
       
       {/* Legacy demos */}
       <Route path="/demo-simulator" element={<DemoSimulator />} />

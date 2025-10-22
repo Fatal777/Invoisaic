@@ -29,7 +29,7 @@ Amplify.configure({
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!CLERK_PUBLISHABLE_KEY) {
-  throw new Error('Missing Clerk Publishable Key. Please add VITE_CLERK_PUBLISHABLE_KEY to your .env.local file');
+  throw new Error('Missing Clerk Publishable Key');
 }
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

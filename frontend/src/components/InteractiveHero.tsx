@@ -153,10 +153,10 @@ export default function InteractiveHero() {
               theme === 'dark' ? 'text-white' : 'text-gray-900'
             }`}
           >
-            I Love 
+            AI Invoice
             <br />
             <span className={theme === 'dark' ? 'text-[#F97272]' : 'text-[#EFA498]'}>
-              Himanshi
+              Automation
             </span>
           </motion.h1>
 

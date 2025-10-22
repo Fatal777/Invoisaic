@@ -120,6 +120,17 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
             >
               Architecture
             </Link>
+            <Link 
+              to="/agent-dashboard" 
+              className={`text-sm font-medium tracking-wide transition-all duration-200 flex items-center gap-1 ${
+                isDark 
+                  ? 'text-gray-400 hover:text-[#EFA498]' 
+                  : 'text-gray-600 hover:text-[#F97272]'
+              }`}
+            >
+              <Activity className="w-4 h-4" />
+              Agent Dashboard
+            </Link>
             
             {/* Theme Toggle with Animation */}
             <button
@@ -254,6 +265,18 @@ export default function Navbar({ variant = 'dark', showAgentStatus = false }: Na
               }`}
             >
               Architecture
+            </Link>
+            <Link
+              to="/agent-dashboard"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block px-4 py-3 text-sm font-medium transition-all duration-200 flex items-center gap-2 ${
+                isDark
+                  ? 'text-gray-400 hover:text-[#EFA498] active:text-[#F97272]'
+                  : 'text-gray-600 hover:text-[#F97272] active:text-[#f85c5c]'
+              }`}
+            >
+              <Activity className="w-4 h-4" />
+              Agent Dashboard
             </Link>
             <div className={`border-t my-3 ${
               isDark ? 'border-gray-700/40' : 'border-gray-300/40'

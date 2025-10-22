@@ -25,6 +25,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import Navbar from '@/components/Navbar';
+import DeploymentStatus from '@/components/DeploymentStatus';
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState({
@@ -428,39 +429,8 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* System Status */}
-            <Card className="bg-white/5 backdrop-blur-xl border-white/10">
-              <CardHeader>
-                <CardTitle className="text-white text-sm">System Status</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">AI Agent</span>
-                  <Badge className="bg-green-500/20 text-green-400 text-xs">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse" />
-                    Active
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">Fraud Detection</span>
-                  <Badge className="bg-green-500/20 text-green-400 text-xs">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse" />
-                    Monitoring
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">Compliance</span>
-                  <Badge className="bg-green-500/20 text-green-400 text-xs">
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5 animate-pulse" />
-                    Up to date
-                  </Badge>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-400">Processing Speed</span>
-                  <span className="text-xs font-semibold text-white">124ms avg</span>
-                </div>
-              </CardContent>
-            </Card>
+            {/* Deployment Status */}
+            <DeploymentStatus />
           </div>
         </div>
       </div>

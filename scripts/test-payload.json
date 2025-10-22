@@ -1,0 +1,4 @@
+{
+  "invoiceId": "test-001",
+  "documentUrl": "s3://invoisaic-invoices/test-invoice.pdf"
+}

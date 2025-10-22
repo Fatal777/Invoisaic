@@ -1,0 +1,424 @@
+# India GST Compliance for Invoices
+
+## GST Invoice Requirements (Section 31, CGST Act)
+
+### Mandatory Fields for Tax Invoice
+
+1. **GSTIN** (Goods and Services Tax Identification Number)
+   - 15-digit alphanumeric
+   - Format: XXYYYZZZZZCZ000
+   - Supplier's GSTIN mandatory
+
+2. **Invoice Number and Date**
+   - Unique sequential number
+   - No gaps or duplicates
+   - Date format: DD/MM/YYYY
+
+3. **Customer Details**
+   - Name of recipient
+   - Delivery address (if different from billing)
+   - GSTIN (if registered)
+   - State and state code
+
+4. **Description of Goods/Services**
+   - HSN (Harmonized System of Nomenclature) code for goods
+   - SAC (Services Accounting Code) for services
+   - Quantity and unit
+   - Total value
+
+5. **Taxable Value**
+   - Value before GST
+   - Per item and total
+
+6. **GST Rate and Amount**
+   - CGST rate and amount
+   - SGST/UTGST rate and amount (intra-state)
+   - IGST rate and amount (inter-state)
+   - Cess if applicable
+
+7. **Place of Supply**
+   - State name and code
+   - Determines CGST+SGST or IGST
+
+8. **Signature**
+   - Authorized signatory
+   - Digital signature acceptable
+
+## GST Rates in India
+
+### 5% GST
+- Packaged food items
+- Coal and lignite
+- Branded garments up to ₹1,000
+- Footwear up to ₹500
+- Cashew nuts
+- Ice cream
+- Transport services (non-AC)
+
+### 12% GST
+- Computers and processed food
+- Frozen meat
+- Butter, cheese, ghee
+- Diagnostic kits
+- Tooth powder
+- Umbrellas
+- Spectacles
+
+### 18% GST (Most Common)
+- Capital goods and industrial intermediaries
+- Hair oil, soaps
+- Toothpaste
+- Footwear ₹500-1,000
+- Pasta, preserved vegetables
+- IT services
+- Hotel accommodation (₹1,000-7,500)
+- Restaurant services (with AC/liquor license)
+
+### 28% GST
+- Luxury items
+- Cars, motorcycles
+- Tobacco products
+- Aerated drinks
+- Pan masala
+- Hotel accommodation (>₹7,500)
+- Cinemas (>₹100 ticket)
+- 5-star hotels
+
+### 0% GST (Zero-rated)
+- Exports
+- Supply to SEZ
+- International travel
+
+### Exempt Supplies
+- Healthcare services
+- Educational services
+- Fresh fruits and vegetables
+- Unbranded food grains
+- Books, newspapers
+- Public transport
+
+## Types of GST Invoices
+
+### Tax Invoice
+Standard invoice for taxable supplies:
+- All mandatory fields required
+- Issued at time of supply
+- GSTR-1 reporting required
+
+### Bill of Supply
+For composition dealers and exempt supplies:
+- Cannot charge GST separately
+- "Bill of Supply" clearly mentioned
+- Composition levy statement if applicable
+
+### Receipt Voucher
+For advances received:
+- Before supply of goods/services
+- Contains advance payment details
+- GSTR-1 reporting in "Advances Received"
+
+### Credit Note
+- Reduce taxable value post-supply
+- Reference original invoice
+- Must be declared in GSTR-1
+- Time limit: September of next FY or annual return
+
+### Debit Note
+- Increase taxable value post-supply
+- Additional charges discovered later
+- Reference original invoice
+- Time limit: September of next FY
+
+### Revised Invoice
+- For exports (SEZ/Non-SEZ)
+- Exchange rate fluctuations
+- Additional details
+
+## E-Invoice System (Electronic Invoice)
+
+### Mandatory from October 2020 (Phased)
+
+**Current threshold:** ₹5 crore annual turnover (as of Oct 2024)
+**New threshold from 2025:** ₹10 crore annual turnover
+
+**Requirements:**
+- Generate invoice on own system
+- Upload to IRP (Invoice Registration Portal)
+- Get IRN (Invoice Reference Number)
+- Download signed JSON with QR code
+- Cannot be canceled after 24 hours
+
+**Components:**
+- Unique IRN (64-character hash)
+- Digitally signed by GST System
+- QR code for verification
+- JSON file
+
+**Benefits:**
+- Real-time invoice reporting
+- Reduced data entry errors
+- Faster ITC claims
+- Prevents fake invoices
+- Auto-population of returns
+
+## E-Way Bill Requirements
+
+### For movement of goods worth > ₹50,000:
+
+**Mandatory details:**
+- Consignor and consignee GSTIN
+- Place of delivery (PIN code)
+- Invoice/delivery challan number
+- HSN code
+- Transport document number
+- Vehicle number
+
+**Validity:**
+- Based on distance
+- 1 day for up to 200 km
+- Additional day per 200 km thereafter
+- Can be extended once
+
+**Exemptions:**
+- Non-GST goods
+- Certain notified goods
+- Goods via parcel/courier (< 20 kg)
+
+## Input Tax Credit (ITC)
+
+### Conditions for Claiming ITC
+
+1. **Valid Tax Invoice**
+   - All mandatory fields present
+   - Supplier has filed GSTR-1
+   - Invoice in GSTR-2B
+
+2. **Receipt of Goods/Services**
+   - Actual receipt documented
+   - Payment made (if applicable)
+
+3. **Time Limit**
+   - Earlier of:
+     * November 30 of next FY
+     * Date of filing annual return
+
+4. **Supplier Filed Return**
+   - Supplier must have paid tax
+   - Visible in GSTR-2B
+   - ITC reversal if supplier defaults
+
+### ITC Not Available For
+
+- Motor vehicles (except specified)
+- Food and beverages
+- Outdoor catering
+- Beauty treatment, health services
+- Rent-a-cab, life insurance
+- Travel benefits to employees
+- Club membership fees
+
+## Reverse Charge Mechanism (RCM)
+
+### Applicable When:
+
+1. **Goods from unregistered dealer**
+   - Recipient pays tax
+   - No ITC available
+
+2. **Specified services**
+   - Legal services
+   - GTA services
+   - Import of services
+
+3. **Imports**
+   - IGST on import
+   - Paid at customs
+
+### Invoice Requirements:
+- "Tax payable under reverse charge"
+- No GST charged by supplier
+- Recipient accounts in GSTR-3B
+
+## Composition Scheme
+
+### Eligibility: Annual turnover < ₹1.5 crore
+
+**Rates:**
+- Manufacturers: 1% of turnover
+- Traders: 1% of turnover
+- Restaurants: 5% of turnover
+- Other services: 6% of turnover
+
+**Limitations:**
+- Cannot charge GST separately
+- No ITC available
+- No inter-state supply
+- No e-commerce supply
+- No supply of exempt goods
+
+**Invoice Requirements:**
+- "Composition taxable person, not eligible to collect tax"
+- Bill of Supply instead of Tax Invoice
+
+## HSN/SAC Codes
+
+### HSN for Goods
+- 8-digit code
+- Mandatory based on turnover:
+  * < ₹5 crore: Optional
+  * ₹5 crore - ₹100 crore: 4 digits
+  * > ₹100 crore: 6 digits
+
+### SAC for Services
+- 6-digit code
+- Mandatory for services
+- Based on nature of service
+
+## GSTR Fil Filing
+
+### Monthly Returns
+
+**GSTR-1** (Outward supplies)
+- Due: 11th of next month
+- Contains all sales
+- Invoice-wise details (>₹2.5L)
+- Consolidated for B2C
+
+**GSTR-3B** (Summary return & tax payment)
+- Due: 20th/22nd/24th of next month
+- Self-declared liability
+- Tax payment with return
+- ITC claim
+
+**GSTR-2B** (Auto-drafted ITC)
+- Generated on 14th of next month
+- Based on suppliers' GSTR-1
+- Read-only document
+- Match for ITC claim
+
+### Annual Return
+
+**GSTR-9** (Annual Return)
+- Due: December 31 of next FY
+- Turnover > ₹2 crore (mandatory)
+- Reconciliation with books
+- Optional for < ₹2 crore
+
+**GSTR-9C** (Reconciliation Statement)
+- With GSTR-9 if turnover > ₹5 crore
+- CA/CMA certification
+- Reconciles with financial statements
+
+## Penalties and Interest
+
+### Late Filing Penalties
+
+**GSTR-1:**
+- ₹200 per day (₹100 CGST + ₹100 SGST)
+- Maximum: ₹10,000
+
+**GSTR-3B:**
+- ₹50 per day if no tax liability (₹25 + ₹25)
+- ₹200 per day if tax liability exists
+- Interest: 18% p.a. on tax amount
+
+### Wrong ITC Claim
+- Penalty: 10% of wrongly availed ITC or ₹10,000 (whichever higher)
+- Interest on amount
+
+### Fake Invoices
+- 100% of tax amount as penalty
+- Criminal proceedings possible
+- Imprisonment up to 5 years
+
+## Fraud Prevention
+
+### Red Flags
+- Invoices without valid GSTIN
+- Fake GSTINs (verify on GST portal)
+- Invoices from blacklisted entities
+- Price significantly below market rate
+- Supplier not filing returns regularly
+- No matching entries in GSTR-2B
+- Inactive or suspended GSTIN
+- Multiple GSTINs same address
+
+### Verification Steps
+1. Check GSTIN validity on gst.gov.in
+2. Verify supplier's return filing status
+3. Match invoices with GSTR-2B
+4. Confirm actual delivery of goods/services
+5. Bank account verification
+6. Physical verification if needed
+
+## Special Provisions
+
+### Job Work
+- Challan instead of invoice
+- No GST if goods returned
+- Time limits apply (1-3 years)
+
+### Sales Return
+- Credit note within time limit
+- Reduce output liability
+- Recipient reverses ITC
+
+### Advance Payment
+- GST applicable on advance
+- Receipt voucher required
+- Adjust against final invoice
+
+## Best Practices
+
+1. **E-Invoice compliance** if threshold crossed
+2. **Regular GSTR-2B reconciliation**
+3. **Timely return filing** (avoid late fees)
+4. **HSN/SAC codes** accurate
+5. **Supplier GSTIN verification** before purchase
+6. **Digital record keeping** (6 years)
+7. **ITC documentation** complete
+8. **E-Way Bill** for all applicable movements
+9. **Professional advice** for complex transactions
+10. **Software automation** for compliance
+
+## Recent Updates (2024-2025)
+
+### October 2024 Changes:
+- E-invoice threshold: ₹5 crore (will increase to ₹10 crore from April 2025)
+- QR code mandatory on B2C invoices (turnover > ₹500 crore)
+- GSTR-2B auto-populated from GSTR-1 filings
+- Late fee waiver for NIL returns (extended to March 2025)
+
+### 2024 Compliance Updates:
+- Aadhaar authentication mandatory for new registrations
+- Biometric authentication for high-risk assessees  
+- Enhanced ITC matching (2% tolerance removed)
+- Real-time invoice upload to IRP
+- E-Way Bill generation through SMS/mobile app
+- Annual aggregate turnover (AATO) clarifications
+
+### Upcoming 2025 Changes:
+- E-invoice threshold increase to ₹10 crore (April 2025)
+- GST Appellate Tribunal operationalization
+- Rationalization of tax rates (ongoing)
+- Enhanced scrutiny of high-value transactions
+- Mandatory biometric authentication expansion
+
+## Common Mistakes
+
+1. **Incorrect GSTIN** on invoice
+2. **Wrong HSN/SAC codes**
+3. **Place of supply errors**
+4. **ITC claimed without GSTR-2B match**
+5. **E-invoice not generated** (above threshold)
+6. **E-Way Bill missing** for goods movement
+7. **Late return filing**
+8. **Composition vs regular** scheme confusion
+9. **RCM not accounted** properly
+10. **Credit/debit notes** not issued timely
+
+---
+
+This document is for informational purposes. Always consult a CA or tax professional for specific guidance.
+
+Last Updated: October 2025

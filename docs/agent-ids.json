@@ -1,0 +1,45 @@
+{
+  "supervisor": {
+    "agentId": "XXXXXXXXX",
+    "agentAliasId": "TSTALIASID",
+    "name": "Invoisaic-Supervisor",
+    "description": "Orchestrates multi-agent invoice processing",
+    "model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
+  },
+  "extraction": {
+    "agentId": "XXXXXXXXX",
+    "agentAliasId": "TSTALIASID",
+    "name": "Invoisaic-Extraction",
+    "description": "Extracts data from invoices using Textract",
+    "model": "anthropic.claude-3-haiku-20240307-v1:0"
+  },
+  "fraudDetection": {
+    "agentId": "XXXXXXXXX",
+    "agentAliasId": "TSTALIASID",
+    "name": "Invoisaic-Fraud-Detection",
+    "description": "Detects fraud patterns and anomalies",
+    "model": "anthropic.claude-3-haiku-20240307-v1:0"
+  },
+  "compliance": {
+    "agentId": "XXXXXXXXX",
+    "agentAliasId": "TSTALIASID",
+    "name": "Invoisaic-Compliance",
+    "description": "Validates tax and regulatory compliance",
+    "model": "anthropic.claude-3-haiku-20240307-v1:0",
+    "knowledgeBaseId": "KB123ABC456"
+  },
+  "approval": {
+    "agentId": "XXXXXXXXX",
+    "agentAliasId": "TSTALIASID",
+    "name": "Invoisaic-Approval",
+    "description": "Manages approval workflows",
+    "model": "anthropic.claude-3-haiku-20240307-v1:0"
+  },
+  "cashFlow": {
+    "agentId": "XXXXXXXXX",
+    "agentAliasId": "TSTALIASID",
+    "name": "Invoisaic-CashFlow",
+    "description": "Provides cash flow intelligence and forecasting",
+    "model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
+  }
+}
