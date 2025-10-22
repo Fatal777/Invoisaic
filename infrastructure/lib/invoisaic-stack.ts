@@ -305,8 +305,9 @@ export class InvoisaicStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: 'lambda/textractHandler.handler',
       code: lambda.Code.fromAsset('../backend/dist'),
-      timeout: cdk.Duration.seconds(120),
-      memorySize: 1024,
+      timeout: cdk.Duration.seconds(300), // Increased from 120 for large files
+      memorySize: 3008, // Increased from 1024 for large PDF processing
+      ephemeralStorageSize: cdk.Size.mebibytes(2048), // 2GB temporary storage
       environment: {
         S3_DOCUMENTS_BUCKET: documentsBucket.bucketName,
         REGION: this.region,
@@ -531,7 +532,12 @@ export class InvoisaicStack extends cdk.Stack {
       description: `Production API for ${environment}`,
       binaryMediaTypes: ['multipart/form-data', 'image/*', 'application/pdf', 'application/octet-stream'],
       defaultCorsPreflightOptions: {
-        allowOrigins: apigateway.Cors.ALL_ORIGINS,
+        allowOrigins: [
+          'https://invoisaic.xyz',
+          'https://invoisaic.vercel.app',
+          'http://localhost:5173',
+          'http://localhost:3000'
+        ],
         allowMethods: apigateway.Cors.ALL_METHODS,
         allowHeaders: [
           'Content-Type',
@@ -542,7 +548,7 @@ export class InvoisaicStack extends cdk.Stack {
           'X-Amz-User-Agent',
           'Accept'
         ],
-        allowCredentials: true
+        allowCredentials: false
       },
       deployOptions: {
         description: `Production API for ${environment}`,
@@ -646,11 +652,22 @@ export class InvoisaicStack extends cdk.Stack {
     const agenticDemo = api.root.addResource('agentic-demo');
     agenticDemo.addMethod('POST', new apigateway.LambdaIntegration(agenticDemoFunction));
 
-    // TEXTRACT - OCR Processing endpoint (inherits CORS from root API)
-    const textract = api.root.addResource('textract');
-    textract.addMethod('POST', new apigateway.LambdaIntegration(textractFunction, {
-      proxy: true
-    }));
+    // TEXTRACT - Using Lambda Function URL to bypass API Gateway 10MB limit
+    // API Gateway has a 10MB payload limit which is too small for large invoices
+    const textractFunctionUrl = textractFunction.addFunctionUrl({
+      authType: lambda.FunctionUrlAuthType.NONE,
+      cors: {
+        allowedOrigins: [
+          'https://invoisaic.xyz',
+          'https://invoisaic.vercel.app',
+          'http://localhost:5173',
+          'http://localhost:3000'
+        ],
+        allowedMethods: [lambda.HttpMethod.ALL],
+        allowedHeaders: ['*'],
+        maxAge: cdk.Duration.seconds(86400),
+      },
+    });
 
     // BEDROCK AGENT - Invoke Agent endpoint (CORS inherited from root API)
     const invokeAgent = api.root.addResource('invoke-agent');
@@ -727,6 +744,12 @@ export class InvoisaicStack extends cdk.Stack {
       value: `wss://${webSocketApi.apiId}.execute-api.${this.region}.amazonaws.com/prod`,
       description: 'WebSocket API URL for LiveDoc real-time updates',
       exportName: `invoisaic-websocket-url-${environment}`,
+    });
+
+    new cdk.CfnOutput(this, 'TextractUrl', {
+      value: textractFunctionUrl.url,
+      description: 'Textract Function URL (bypasses API Gateway 10MB limit)',
+      exportName: `invoisaic-textract-url-${environment}`,
     });
 
     new cdk.CfnOutput(this, 'AgentStatusUrl', {

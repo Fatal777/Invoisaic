@@ -187,13 +187,13 @@ export const useOCRProcessing = () => {
       setCurrentStep(step);
       setProcessingProgress(20);
 
-      // Call Textract API
-      const apiUrl = import.meta.env.VITE_API_URL || 'https://xpdhtqhxfa.execute-api.ap-south-1.amazonaws.com/prod';
+      // Call Textract Lambda Function URL (bypasses API Gateway 10MB limit)
+      const textractUrl = import.meta.env.VITE_TEXTRACT_URL || 'https://sh455p57bhgpj5j6ng3r5bgc4i0qfdkk.lambda-url.ap-south-1.on.aws/';
       const formData = new FormData();
       formData.append('file', file.file, file.name);
       formData.append('filename', file.name);
 
-      const response = await fetch(`${apiUrl}/textract`, {
+      const response = await fetch(textractUrl, {
         method: 'POST',
         body: formData,
         headers: {

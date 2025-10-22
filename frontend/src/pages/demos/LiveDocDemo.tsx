@@ -276,12 +276,14 @@ export default function LiveDocDemo() {
     clearAnnotations();
 
     try {
-      // Upload to S3 via Textract endpoint
+      // Upload to S3 via Textract Lambda Function URL (bypasses API Gateway 10MB limit)
       const formData = new FormData();
       formData.append('file', invoiceFile);
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000/api';
-      const uploadResponse = await fetch(`${apiUrl}/textract`, {
+      const textractUrl = import.meta.env.VITE_TEXTRACT_URL || 'https://sh455p57bhgpj5j6ng3r5bgc4i0qfdkk.lambda-url.ap-south-1.on.aws/';
+      console.log('Uploading to Textract URL:', textractUrl);
+      
+      const uploadResponse = await fetch(textractUrl, {
         method: 'POST',
         body: formData
       });
